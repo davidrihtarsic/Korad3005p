@@ -92,23 +92,23 @@ def KoradSettingsForm():
 
 def Run():
 	ser = serial.Serial(Set_port.value)
-	ser.write('VSET1:'+Vset.value)
+	ser.write(('VSET1:'+Vset.value).encode('utf-8'))
 	sleep(0.1)
-	ser.write('ISET1:'+Iset.value)
+	ser.write(('ISET1:'+Iset.value).encode('utf-8'))
 	sleep(0.1)
-	ser.write('OUT1')
+	ser.write(('OUT1').encode('utf-8'))
 	sleep(0.1)
 	Charge_out = 0.0
 	eEng_out = 0.0
 	Start_time = time()
 	while True:
 		Time_r.new_value(strftime('%H:%M:%S',gmtime(time()-Start_time)))
-		ser.write('VOUT1?')
+		ser.write(('VOUT1?').encode('utf-8'))
 		text = ser.read(5)
-		Vout.new_value(text)
-		ser.write('IOUT1?')
+		Vout.new_value(text.decode('utf-8'))
+		ser.write(('IOUT1?').encode('utf-8'))
 		text = ser.read(5)
-		Iout.new_value(text)
+		Iout.new_value(text.decode('utf-8'))
 		#------- DATA ----------------------------
 		Power.new_value('{:.2f}'.format(float(Vout.value)*float(Iout.value)))
 		eEng_out += float(Power.value) /3600
@@ -116,20 +116,20 @@ def Run():
 		Charge_out += float(Iout.value)*1000/60/60
 		Charge.new_value('{:.2f}'.format(Charge_out,))
 		if float(Iout.value)< float(Ioff.value):
-			ser.write('OUT0')
+			ser.write(('OUT0').encode('utf-8'))
 			break	
 		sleep(1)
 
 def SetVoltage():
 	Vset.new_value('')
-	key = raw_input('')
+	key = input('')
 	Vset.new_value(key)
 	if float(key) > 30:
 		Vset.new_value('00.00')
 
 def SetCurrent():
 	Iset.new_value('')
-	key = raw_input('')
+	key = input('')
 	Iset.new_value(key)
 	if float(key) > 5.0:
 		Iset.new_value('5.000')
@@ -138,7 +138,7 @@ def SetCurrent():
 
 def SetCutOff():
 	Ioff.new_value('')
-	key = raw_input('')
+	key = input('')
 	Ioff.new_value(key)
 	if float(key) > 5.0:
 		Ioff.new_value('5.000')
@@ -156,7 +156,7 @@ cmd = Edit('Cmd',2,20)
 cmd.value = ''
 while (cmd.value != 'q'):
 	cmd.new_value('')
-	key = raw_input('')
+	key = input('')
 	cmd.new_value(key)
 	#preveri tipko in naredikar je treba.
 	if key == 'r':
