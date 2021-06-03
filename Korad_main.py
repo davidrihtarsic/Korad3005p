@@ -3,6 +3,7 @@ import sys
 from time import sleep, time,strftime,gmtime
 import serial
 from serial.tools.list_ports import comports
+from datetime import datetime
 
 
 cls()
@@ -92,7 +93,9 @@ def KoradSettingsForm():
 
 def Run():
   #--- clear file data ---
-  dataFile = open("./data.csv", "w")
+  now = datetime.now()
+  dt_str = now.strftime("%Y%m%d-%H%M%S")
+  dataFile = open("./"+dt_str+"-TUI.csv", "w")
   dataFile.write("Time [h:m:sr], Voltage [V], Current [A]\n")
   ser = serial.Serial(Set_port.value)
   ser.write(('VSET1:'+Vset.value).encode('utf-8'))
